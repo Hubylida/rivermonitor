@@ -1,0 +1,94 @@
+body,html{
+  height: 100%;
+}
+body{
+  background: #ddd;
+}
+#left{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 13em;
+  height: 100vh;
+  background: #2d333d;
+  border-top: 5px solid #11afff;
+}
+
+#name{
+  width: 100%;
+}
+
+.btn{
+  width: 100%;
+  font-size: 1.3em;
+  color: #ddd;
+  background: #2d333d;
+  text-align: left;
+  padding:1.5em 1em;
+  border-left: 4px solid transparent;
+}
+
+.btn:hover{
+  color: #fff;
+  background: #222933;
+}
+
+
+.btn img{
+  width: 2em;
+  margin-right: .5em;
+}
+
+#right-wrap{
+  padding: 0;
+}
+
+#right{
+  margin-left: 13em;
+}
+
+#title{
+  width: 100%;
+  background: #fff;
+  margin: 0;
+  padding: .5em 2em;
+  font-size: 1.5em;
+}
+
+#video-wrap{
+  margin: 1em;
+}
+
+video{
+  width: 100%;
+  background: #222;
+}
+
+#video-info{
+  height: 90%;
+  background: #fff;
+  margin: 1em;
+}
+
+.common-info{
+  padding: .5em;
+}
+
+#depth{
+  padding: 1em;
+  text-align: center;
+  font-size: 2.2em;
+  color: #56c1b5;
+}
+
+#chart-wrap{
+  width: 100%;
+  padding: 1em;
+  /* background: #fff; */
+}
+
+#chart{
+  width: 100%;
+  height: 400px;
+}
+

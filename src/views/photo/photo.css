@@ -1,0 +1,89 @@
+#left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14em;
+  height: 100vh;
+  background: #2d333d;
+  border-top: 5px solid #11afff;
+}
+
+#name {
+  width: 100%;
+}
+
+.btn {
+  width: 100%;
+  font-size: 1.3em;
+  color: #ddd;
+  background: #2d333d;
+  text-align: left;
+  padding: 1.5em 1em;
+  border-left: 4px solid transparent;
+}
+
+.btn:hover {
+  color: #fff;
+  background: #222933;
+}
+
+.btn img {
+  width: 2em;
+  margin-right: .5em;
+}
+
+#right {
+  margin-left: 14em;
+  background: #ddd;
+  height: 100vh;
+}
+
+#title {
+  width: 100%;
+  background: #fff;
+  margin: 0;
+  padding: .5em 2em;
+  font-size: 1.5em;
+}
+
+#photo-wrap {
+  width: 100%;
+  margin: 1em;
+}
+
+#main {
+  width: 98%;
+  height: 500px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .15), 0 3px 3px rgba(0, 0, 0, .15);
+}
+
+#controller {
+  text-align: center;
+}
+
+#camera-info{
+  width: 98%;
+  height: 4em;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .15), 0 3px 3px rgba(0, 0, 0, .15);
+  position: relative;
+}
+
+#left-title{
+  font-size: 1.5em;
+  position: absolute;
+  top: .7em;
+  left: 2em;
+  height: 50px;
+  font-weight: 600;
+}
+
+#right-title{
+  font-size: 1.5em;
+  position: absolute;
+  top: .6em;
+  right: 4em;
+  height: 50px;
+  font-weight: 600;
+}

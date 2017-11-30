@@ -1,0 +1,15 @@
+body{
+  /* background: url('bg.jpg'); */
+}
+#bg-img{
+  width: 100%;
+}
+
+#btn-contain{
+  width: 80%;
+  margin: 1em auto;
+}
+
+.cam-btn{
+  margin: 1em;
+}

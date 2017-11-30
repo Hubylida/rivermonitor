@@ -1,0 +1,76 @@
+#left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14em;
+  height: 100vh;
+  background: #2d333d;
+  border-top: 5px solid #11afff;
+}
+
+#name {
+  width: 100%;
+}
+
+#left .btn {
+  width: 100%;
+  font-size: 1.3em;
+  color: #ddd;
+  background: #2d333d;
+  text-align: left;
+  padding: 1.5em 1em;
+  border-left: 4px solid transparent;
+}
+
+.btn:hover {
+  color: #fff;
+  background: #222933;
+}
+
+.btn img {
+  width: 2em;
+  margin-right: .5em;
+}
+
+#right {
+  margin-left: 14em;
+  background: #ddd;
+  min-height: 100vh;
+  padding: 1px;
+}
+
+#title {
+  width: 100%;
+  background: #fff;
+  margin: 0;
+  padding: .5em 2em;
+  font-size: 1.5em;
+}
+
+#left-main {
+  min-height: 88vh;
+  background: #4F5860;
+  margin: 1em;
+  padding: 2em;
+  border-radius: 5px;
+}
+
+.setting-item {
+  background: #fff;
+  padding: 1em 1.5em;
+  border-radius: 10px;
+  margin-bottom: 2em;
+}
+
+.setting-item input[type] {
+  border: 0;
+}
+
+.setting-item input:nth-child(1){
+  display: none;
+}
+
+.save,
+.change {
+  margin-right: 1em;
+}
