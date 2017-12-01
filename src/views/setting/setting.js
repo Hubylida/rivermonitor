@@ -11,7 +11,7 @@ $(function () {
   var cameras = [{
       "name": "仙林1",
       "info": "南邮101",
-      "mac_address": "8c:85:90:00:42:d0",
+      "mac": "8c:85:90:00:42:d0",
       "video_url": "http:www.video.com"
     },
     {
@@ -23,13 +23,13 @@ $(function () {
     {
       "name": "仙林1",
       "info": "南邮101",
-      "mac_address": "8c:85:90:00:42:d0",
+      "mac": "8c:85:90:00:42:d0",
       "video_url": "http:www.video.com"
     },
     {
       "name": "仙林1",
       "info": "南邮101",
-      "mac_address": "8c:85:90:00:42:d0",
+      "mac": "8c:85:90:00:42:d0",
       "video_url": "http:www.video.com"
     }
   ]
@@ -42,7 +42,7 @@ $(function () {
     for (let i = 0; i < rows; i++) {
       elements += '<div class="row">'
       for (let j = 0; j < 4; j++) {
-        elements += '<div class="col-md-3"><form id="cameras_'+index+'" class="setting-item"><input name=id value="cameras_'+index+++'"><input type="text" name="name" value="' + cameras[j].name + '"><p><span>厂家型号: </span><input type="text" name="info" value="' + cameras[j].info + '"></p><p><span>物理地址: </span><input type="text" name="mac_address" value="' + cameras[j].mac_address + '"></p><p><span>视频链接地址: </span><input type="text" name="video_url" value="' + cameras[j].video_url + '"></p><p class="change btn btn-primary btn-sm">修改</p><p class="save btn btn-primary btn-sm">保存</p></form></div>'
+        elements += '<div class="col-md-3"><form id="cameras_'+index+'" class="setting-item"><input name=id value="cameras_'+index+++'"><input type="text" name="name" value="' + cameras[j].name + '"><p><span>厂家型号: </span><input type="text" name="info" value="' + cameras[j].info + '"></p><p><span>物理地址: </span><input type="text" name="mac" value="' + cameras[j].mac + '"></p><p><span>视频链接地址: </span><input type="text" name="video_url" value="' + cameras[j].video_url + '"></p><p class="change btn btn-primary btn-sm">修改</p><p class="save btn btn-primary btn-sm">保存</p></form></div>'
       }
       elements += '</div>'
     }
