@@ -62,12 +62,16 @@ body{
 video{
   width: 100%;
   background: #222;
+  color: #222;
 }
 
 #video-info{
   height: 90%;
   background: #fff;
   margin: 1em;
+  font-size: 1.2em;
+  border: 3px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .15), 0 3px 3px rgba(0, 0, 0, .15);
 }
 
 .common-info{

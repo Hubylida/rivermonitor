@@ -8,17 +8,15 @@ const compiler = webpack(config);
 // webpack.dev.config.js
 // webpack.production.config.js
 
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: config.output.publicPath
+}));
+
 var fs = require('fs');
 var pageStr = fs.readFileSync('./src/lib/photo.json', {
   encoding: "UTF-8"
 });
 var page = JSON.parse(pageStr);
-var video = fs.readFileSync('./dist/video.html', 'UTF-8', function (err, data) {
-  if (err) {
-    console.err(err);
-  }
-  console.log(data);
-})
 
 var mysql = require('mysql');
 var connection = mysql.createConnection({
@@ -33,30 +31,15 @@ connection.connect(function (err) {
     console.error('error connecting: ' + err.stack);
     return;
   }
-
   console.log('connected as id ' + connection.threadId);
 });
-
-
-function getData() {
-  var all;
-  var getSql = 'select * from cameras';
-  connection.query(getSql, function (err, result) {
-    if (err) {
-      console.log(err.message);
-    }
-    all = console.log(result[1]);
-  });
-  connection.end();
-}
-// getData();
 
 
 function addData() {
   var addSql = 'insert into cameras (name,location,info,mac,video_url,time) values (?,?,?,?,?,?)';
   var addSqlParams = [];
   for (let i = 0; i < 10; i++) {
-    addSqlParams.push(["仙林" + (i + 1), "仙林", "南邮x-10" + (i + 1), "1.1.1.1", "http://www.a.com", "2017-11-30 15:20"])
+    addSqlParams.push(["仙林" + (i + 1), "仙林", "南邮x-10" + (i + 1), "1.1.1.1", "./1.mp4", "2017-11-30 15:20"])
   }
   addSqlParams.map(function (item) {
     connection.query(addSql, item, function (err, result) {
@@ -69,7 +52,7 @@ function addData() {
       console.log('-----------------------------------------------------------------\n\n');
     })
   });
-  connection.end();
+  // connection.end();
 }
 
 // addData();
@@ -96,9 +79,20 @@ function deleteData() {
 }
 
 // deleteData();
+
 var camerasName = [];
 
 function getAllCamerasName() {
+  var videoHtml = fs.readFileSync('./dist/video.html', 'UTF-8', function (err, data) {
+    if (err) {
+      console.err(err);
+    }
+  });
+  var photoHtml = fs.readFileSync('./dist/photo.html','UTF-8',function(err,data){
+    if(err){
+      console.err(err);
+    }
+  });
   var Sql = 'select name from cameras';
   var cameraItem;
   connection.query(Sql, function (err, result) {
@@ -109,13 +103,15 @@ function getAllCamerasName() {
     for (let i = 0; i < l; i++) {
       camerasName.push(result[i]);
       app.get('/camera_' + (i + 1), function (req, res) {
-        res.send(video);
+        res.send(videoHtml);
         res.status(404).send('Sorry, we cannot find that!');
       });
+      app.get('/camera_' + (i+1)+'_p',function(req,res){
+        res.send(photoHtml);
+        res.status(404).send('Sorry, we cannot find that!');
+      })
     }
   });
-
-  // connection.end();
 }
 getAllCamerasName();
 
@@ -125,38 +121,57 @@ function getAllCameras() {
     if (err) {
       console.log(err.message);
     }
-    for (let i = 0; i < result.length; i++) {
-      let index = 1;
-      app.get('/video', function (req, res) {
-        if (req.query.id == index) {
-          res.send(result[i]);
-          index++;
-        }
-      });
-    }
+    app.get('/video', function (req, res) {
+      res.send(result[req.query.id - 1]);
+    });
   });
-  connection.end();
+  // connection.end();
 }
-
 getAllCameras();
 
-app.use(webpackDevMiddleware(compiler, {
-  publicPath: config.output.publicPath
-}));
+function intialDepthTable(n) {
+  var sql = 'insert into river_depth (name,depth,time) values (?,?,?)';
+  var addSql = [];
+  for (let i = 0; i < n; i++) {
+    addSql.push(["仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1),'2017-12-2 14:43:02']);
+  }
+  addSql.map(function (item) {
+    connection.query(sql, item, function (err, result) {
+      if (err) {
+        console.log(err.message);
+        return;
+      }
+      console.log("Initial table river_depth success");
+    });
+    // connection.end();
+  })
+}
+// intialDepthTable(10);
+
+function getRiverDepth() {
+  var Sql = 'select * from river_depth';
+  connection.query(Sql, function (err, result) {
+    if (err) {
+      console.log(err.message);
+    }
+    app.get('/depth', function (req, res) {
+      res.send(result[req.query.id - 1]);
+    })
+  })
+}
+getRiverDepth();
+
 
 var pagelength = 10;
-
 for (let i = 0; i < pagelength; i++) {
   app.get('/page_' + (i + 1), function (req, res) {
     res.send(page[i]);
   });
 }
 
-
 app.get('/cameras', function (req, res) {
   res.send(camerasName);
 });
-
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!\n');
