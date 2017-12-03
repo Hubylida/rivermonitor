@@ -5,89 +5,76 @@ import '../components/img/video_icon.png'
 import '../components/img/photo_icon.png'
 import '../components/img/setting_icon.png'
 // import '../../lib/data.mysql'
-
 $(function () {
   $('#setting-a').css('border-left-color', '#11afff');
-  var cameras = [{
-      "name": "仙林1",
-      "info": "南邮101",
-      "mac": "8c:85:90:00:42:d0",
-      "video_url": "http:www.video.com"
-    },
-    {
-      "name": "仙林1",
-      "info": "南邮101",
-      "mac_address": "8c:85:90:00:42:d0",
-      "video_url": "http:www.video.com"
-    },
-    {
-      "name": "仙林1",
-      "info": "南邮101",
-      "mac": "8c:85:90:00:42:d0",
-      "video_url": "http:www.video.com"
-    },
-    {
-      "name": "仙林1",
-      "info": "南邮101",
-      "mac": "8c:85:90:00:42:d0",
-      "video_url": "http:www.video.com"
-    }
-  ]
+  $.ajax({
+    url: 'setting',
+    type: 'get',
+    success: function (data) {
+      var cameras = data;
 
-  function createCameraItems(total) {
-    var contain = $('#left-main'),
-      rows = Math.ceil(total / 4),
-      elements = '',
-      index = 0;
-    for (let i = 0; i < rows; i++) {
-      elements += '<div class="row">'
-      for (let j = 0; j < 4; j++) {
-        elements += '<div class="col-md-3"><form id="cameras_'+index+'" class="setting-item"><input name=id value="cameras_'+index+++'"><input type="text" name="name" value="' + cameras[j].name + '"><p><span>厂家型号: </span><input type="text" name="info" value="' + cameras[j].info + '"></p><p><span>物理地址: </span><input type="text" name="mac" value="' + cameras[j].mac + '"></p><p><span>视频链接地址: </span><input type="text" name="video_url" value="' + cameras[j].video_url + '"></p><p class="change btn btn-primary btn-sm">修改</p><p class="save btn btn-primary btn-sm">保存</p></form></div>'
+      function createCameraItems(total) {
+        var contain = $('#right-main'),
+          rows = Math.ceil(total / 4),
+          elements = '',
+          index = 0;
+        for (let i = 0; i < rows; i++) {
+          elements += '<div class="row">'
+          for (let j = 0; j < 4; j++) {
+            if (index < total) {
+              elements += '<div class="col-md-3"><div class="setting-item"><input name=id value="' + (index + 1) + '"><input type="text" name="name" value="' + cameras[index].name + '"><p><span>厂家型号: </span><input type="text" name="info" value="' + cameras[index].info + '"></p><p><span>物理地址: </span><input type="text" name="mac" value="' + cameras[index].mac + '"></p><p><span>视频链接地址: </span><input type="text" name="video_url" value="' + cameras[index].video_url + '"></p><button class="change btn btn-primary btn-sm">修改</button><button id="save" class="save btn btn-primary btn-sm">保存</button></div></div>'
+              index = index + 1;
+            } else {
+              break;
+            }
+          }
+          elements += '</div>'
+        }
+        $('#right-main').append(elements);
+        var item = Item();
+        item.disable();
+        for (let i = 0; i < total * 4; i++) {
+          $($('.save')[i]).on('click', function () {
+            $($(this).parent().find('button')[0]).removeClass('disabled');
+            item.disable();
+            $.ajax({
+              url: 'camera_info',
+              type: 'get',
+              data: {
+                camera_id: $(this).parent().find('input')[0].value,
+                name: $(this).parent().find('input')[1].value,
+                info: $(this).parent().find('input')[2].value,
+                mac: $(this).parent().find('input')[3].value,
+                video_url: $(this).parent().find('input')[4].value
+              },
+              success: function (data) {
+                console.log(data);
+              }
+            });
+          });
+          $($('.change')[i]).on('click', function () {
+            var input = $(this).parent().find('input[type="text"]');
+            item.change(input);
+            $(this).addClass('disabled');
+          });
+        }
       }
-      elements += '</div>'
-    }
-    $('#left-main').append(elements);
-    var item = Item();
-    item.disable();
-    for(let i = 0; i < total*4; i++){
-      $($('.save')[i]).on('click',function (){
-        // console.log($(this).parents());
-        $(this).parent().submit();
-      });
-      $($('.change')[i]).on('click',function(){
-        var input = $(this).parent().find('input[type="text"]');
-        console.log(input);
-        item.change(input);
-        $(this).addClass('disabled');
-      });
-    }
-    // var l = $('.save').length;
-    // for(let i = 0; i < l; i++){
-    //   $($('.save')[i]).on('click',function(){
-    //     console.log(1);
-    //   })
-    // }
-  }
+      createCameraItems(cameras.length);
 
-  createCameraItems(12);
-
-  function Item() {
-    var textArray = $('#left-main').find('input');
-    var item = {};
-    item.textArray = textArray;
-    item.disable = function () {
-      for (let i = 0; i < this.textArray.length; i++) {
-        $(this.textArray[i]).attr('readonly','readonly');
-      }
-    };
-    item.undisabled = function (e) {
-      for (let i = 0; i < e.length; i++) {
-        console.log(1)
+      function Item() {
+        var textArray = $('#right-main').find('input');
+        var item = {};
+        item.textArray = textArray;
+        item.disable = function () {
+          for (let i = 0; i < this.textArray.length; i++) {
+            $(this.textArray[i]).attr('readonly', 'readonly');
+          }
+        };
+        item.change = function (e) {
+          e.removeAttr('readonly');
+        };
+        return item;
       }
     }
-    item.change = function (e) {
-      e.removeAttr('readonly');
-    }
-    return item;
-  }
+  });
 })

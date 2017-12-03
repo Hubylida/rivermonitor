@@ -88,8 +88,8 @@ function getAllCamerasName() {
       console.err(err);
     }
   });
-  var photoHtml = fs.readFileSync('./dist/photo.html','UTF-8',function(err,data){
-    if(err){
+  var photoHtml = fs.readFileSync('./dist/photo.html', 'UTF-8', function (err, data) {
+    if (err) {
       console.err(err);
     }
   });
@@ -106,7 +106,7 @@ function getAllCamerasName() {
         res.send(videoHtml);
         res.status(404).send('Sorry, we cannot find that!');
       });
-      app.get('/camera_' + (i+1)+'_p',function(req,res){
+      app.get('/camera_' + (i + 1) + '_p', function (req, res) {
         res.send(photoHtml);
         res.status(404).send('Sorry, we cannot find that!');
       })
@@ -124,8 +124,32 @@ function getAllCameras() {
     app.get('/video', function (req, res) {
       res.send(result[req.query.id - 1]);
     });
+    app.get('/setting', function (req, res) {
+      res.send(result);
+    });
+    app.get('/camera_info', function (req, res) {
+      var newInfo = req.query,
+        id;
+        newInfo.camera_id = parseInt(newInfo.camera_id);
+        id = newInfo.camera_id;
+      for (let i in newInfo) {
+        if (newInfo[i] != result[id - 1][i]) {
+          var Sql = 'update cameras set ' + i + '=' + newInfo[i] + ' where camera_id=' + id;
+          connection.query(Sql, function (err, result) {
+            if (err) {
+              console.log(err.message);
+            } else {
+              console.log("update ok!");
+            }
+          })
+
+        }
+      }
+      console.log(newInfo);
+      console.log(result[id-1]);
+      res.send("保存成功！");
+    });
   });
-  // connection.end();
 }
 getAllCameras();
 
@@ -133,7 +157,7 @@ function intialDepthTable(n) {
   var sql = 'insert into river_depth (name,depth,time) values (?,?,?)';
   var addSql = [];
   for (let i = 0; i < n; i++) {
-    addSql.push(["仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1),'2017-12-2 14:43:02']);
+    addSql.push(["仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1), '2017-12-2 14:43:02']);
   }
   addSql.map(function (item) {
     connection.query(sql, item, function (err, result) {
@@ -171,6 +195,20 @@ for (let i = 0; i < pagelength; i++) {
 
 app.get('/cameras', function (req, res) {
   res.send(camerasName);
+});
+
+var settingHtml = fs.readFileSync('./dist/setting.html', 'UTF-8', function (err, data) {
+  if (err) {
+    console.err(err);
+  }
+});
+app.get('/setting.html', function (req, res) {
+  res.send(settingHtml);
+});
+
+app.post('/photo', function (req, res) {
+  console.log('req: ', req);
+  // console.log(req.query.wd);
 });
 
 app.listen(3000, function () {
