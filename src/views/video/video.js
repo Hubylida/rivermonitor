@@ -103,7 +103,8 @@ $(function () {
             id: camId[3].substring(7)
         },
         success: function (data) {
-            $('#video-info').append(`<p id="depth">${data.depth}</p>`);
+            var id = data.length - 1;
+            $('#video-info').append(`<p id="depth">${data[id].depth}</p>`);
         }
-    })
+    });
 })

@@ -13,11 +13,6 @@ app.use(webpackDevMiddleware(compiler, {
 }));
 
 var fs = require('fs');
-var pageStr = fs.readFileSync('./src/lib/photo.json', {
-  encoding: "UTF-8"
-});
-var page = JSON.parse(pageStr);
-
 var mysql = require('mysql');
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -98,6 +93,7 @@ function getAllCamerasName() {
   connection.query(Sql, function (err, result) {
     if (err) {
       console.log(err.message);
+      return;
     }
     var l = result.length;
     for (let i = 0; i < l; i++) {
@@ -114,44 +110,55 @@ function getAllCamerasName() {
   });
 }
 getAllCamerasName();
+ 
 
-function getAllCameras() {
+app.get('/video', function (req, res) {
   var Sql = 'select * from cameras';
   connection.query(Sql, function (err, result) {
     if (err) {
-      console.log(err.message);
+      console.error(err);
+      return;
     }
-    app.get('/video', function (req, res) {
-      res.send(result[req.query.id - 1]);
-    });
-    app.get('/setting', function (req, res) {
-      res.send(result);
-    });
-    app.get('/camera_info', function (req, res) {
-      var newInfo = req.query,
-        id;
-        newInfo.camera_id = parseInt(newInfo.camera_id);
-        id = newInfo.camera_id;
-      for (let i in newInfo) {
-        if (newInfo[i] != result[id - 1][i]) {
-          var Sql = 'update cameras set ' + i + '=' + newInfo[i] + ' where camera_id=' + id;
-          connection.query(Sql, function (err, result) {
-            if (err) {
-              console.log(err.message);
-            } else {
-              console.log("update ok!");
-            }
-          })
-
-        }
-      }
-      console.log(newInfo);
-      console.log(result[id-1]);
-      res.send("保存成功！");
-    });
+    res.send(result[req.query.id - 1]);
   });
-}
-getAllCameras();
+});
+
+app.get('/setting',function(req,res){
+  var Sql = 'select * from cameras';
+  connection.query(Sql,function(err,result){
+    if(err){
+      console.error(err);
+      return;
+    }
+    res.send(result);
+  })
+})
+
+app.get('/camera_info', function (req, res) {
+  var Sql = 'select * from cameras';
+  connection.query(Sql, function (err, result) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    var newInfo = req.query,
+      id;
+    newInfo.camera_id = parseInt(newInfo.camera_id);
+    id = newInfo.camera_id;
+    for (let i in newInfo) {
+      if (newInfo[i] != result[id - 1][i]) {
+        var Sql = 'update cameras set ' + i + '="' + newInfo[i] + '" where camera_id=' + id;
+        connection.query(Sql, function (err, result) {
+          if (err) {
+            console.log(err.message);
+          } else {
+            console.log("update ok!");
+          }
+        });
+      }
+    }
+  });
+})
 
 function intialDepthTable(n) {
   var sql = 'insert into river_depth (name,depth,time) values (?,?,?)';
@@ -172,23 +179,40 @@ function intialDepthTable(n) {
 }
 // intialDepthTable(10);
 
-function getRiverDepth() {
-  var Sql = 'select * from river_depth';
-  connection.query(Sql, function (err, result) {
-    if (err) {
-      console.log(err.message);
-    }
-    app.get('/depth', function (req, res) {
-      res.send(result[req.query.id - 1]);
-    })
-  })
+function initialCameraPhoto(n){
+  var Sql = 'insert into camera_photo (photo_id,name,photo_src,time,note) values (?,?,?,?,?)';
+  var addSql = [];
+  for(let i = 0; i < n; i++){
+    addSql.push([(i+1),"仙林"+(i+1),"b-1.png","2017-12-4 15:20:30","测试"]);
+  }
+  addSql.map(function(item){
+    connection.query(Sql,item,function(err,result){
+      if(err){
+        console.log(err.message);
+        return;
+      }
+      console.log("initial the camera_photo ok!");
+    });
+  });
 }
-getRiverDepth();
+// initialCameraPhoto(10);
+
+app.get('/depth',function(req,res){
+  var Sql = 'select * from river_depth where camera_id=' + parseInt(req.query.id);
+  connection.query(Sql,function (err,result){
+    if(err){
+      console.log(err.message);
+      return;
+    }
+    res.send(result);
+  });
+})
 
 
 var pagelength = 10;
 for (let i = 0; i < pagelength; i++) {
   app.get('/page_' + (i + 1), function (req, res) {
+    var Sql = 'select * from camera_photo where camera_id=' + 
     res.send(page[i]);
   });
 }
