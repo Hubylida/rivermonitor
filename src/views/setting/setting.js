@@ -7,6 +7,19 @@ import '../components/img/setting_icon.png'
 // import '../../lib/data.mysql'
 $(function () {
   $('#setting-a').css('border-left-color', '#11afff');
+  var flag = true;
+  $('#nav-btn').on('click', function () {
+      if(flag){
+          $('#left').animate({
+              left: '+=14em'
+          }, 600);
+      }else{
+          $('#left').animate({
+              left: '-=14em'
+          }, 600);
+      }           
+      flag = !flag;
+  });
   $.ajax({
     url: 'setting',
     type: 'get',

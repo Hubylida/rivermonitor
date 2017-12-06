@@ -75,21 +75,20 @@ function deleteData() {
 
 // deleteData();
 
-var camerasName = [];
+var videoHtml = fs.readFileSync('./dist/video.html', 'UTF-8', function (err, data) {
+  if (err) {
+    console.err(err);
+  }
+});
+var photoHtml = fs.readFileSync('./dist/photo.html', 'UTF-8', function (err, data) {
+  if (err) {
+    console.err(err);
+  }
+});
 
-function getAllCamerasName() {
-  var videoHtml = fs.readFileSync('./dist/video.html', 'UTF-8', function (err, data) {
-    if (err) {
-      console.err(err);
-    }
-  });
-  var photoHtml = fs.readFileSync('./dist/photo.html', 'UTF-8', function (err, data) {
-    if (err) {
-      console.err(err);
-    }
-  });
+app.get('/cameras', function (req, res) {
+  var camerasName = [];
   var Sql = 'select name from cameras';
-  var cameraItem;
   connection.query(Sql, function (err, result) {
     if (err) {
       console.log(err.message);
@@ -98,19 +97,21 @@ function getAllCamerasName() {
     var l = result.length;
     for (let i = 0; i < l; i++) {
       camerasName.push(result[i]);
-      app.get('/camera_' + (i + 1), function (req, res) {
-        res.send(videoHtml);
-        res.status(404).send('Sorry, we cannot find that!');
-      });
-      app.get('/camera_' + (i + 1) + '_p', function (req, res) {
-        res.send(photoHtml);
-        res.status(404).send('Sorry, we cannot find that!');
-      })
     }
+    res.send(camerasName);
+  });
+});
+
+for(let i = 0; i < 10; i++){
+  app.get('/camera_' + (i + 1), function (req, res) {
+    res.send(videoHtml);
+    res.status(404).send('Sorry, we cannot find that!');
+  });
+  app.get('/camera_' + (i + 1) + '_p', function (req, res) {
+    res.send(photoHtml);
+    res.status(404).send('Sorry, we cannot find that!');
   });
 }
-getAllCamerasName();
- 
 
 app.get('/video', function (req, res) {
   var Sql = 'select * from cameras';
@@ -123,10 +124,10 @@ app.get('/video', function (req, res) {
   });
 });
 
-app.get('/setting',function(req,res){
+app.get('/setting', function (req, res) {
   var Sql = 'select * from cameras';
-  connection.query(Sql,function(err,result){
-    if(err){
+  connection.query(Sql, function (err, result) {
+    if (err) {
       console.error(err);
       return;
     }
@@ -160,11 +161,13 @@ app.get('/camera_info', function (req, res) {
   });
 })
 
-function intialDepthTable(n) {
-  var sql = 'insert into river_depth (name,depth,time) values (?,?,?)';
+function intialDepthTable(m,n) {
+  var sql = 'insert into river_depth (camera_id,name,depth,time) values (?,?,?,?)';
   var addSql = [];
-  for (let i = 0; i < n; i++) {
-    addSql.push(["仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1), '2017-12-2 14:43:02']);
+  for(let j = 0; j < m; j++){
+    for (let i = 0; i < n; i++) {
+      addSql.push([(i+1),"仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1), '2017-12-2 14:43:02']);
+    }
   }
   addSql.map(function (item) {
     connection.query(sql, item, function (err, result) {
@@ -174,20 +177,21 @@ function intialDepthTable(n) {
       }
       console.log("Initial table river_depth success");
     });
-    // connection.end();
   })
 }
-// intialDepthTable(10);
+// intialDepthTable(11,10);
 
-function initialCameraPhoto(n){
-  var Sql = 'insert into camera_photo (photo_id,name,photo_src,time,note) values (?,?,?,?,?)';
+function initialCameraPhoto(m,n) {
+  var Sql = 'insert into camera_photo (camera_id,photo_src,time,note) values (?,?,?,?)';
   var addSql = [];
-  for(let i = 0; i < n; i++){
-    addSql.push([(i+1),"仙林"+(i+1),"b-1.png","2017-12-4 15:20:30","测试"]);
+  for(let j = 0; j < m*12; j++){
+    for (let i = 0; i < n; i++) {
+      addSql.push([(i + 1), "b-4.png", "2017-12-4 15:20:30", "测试"]);
+    }
   }
-  addSql.map(function(item){
-    connection.query(Sql,item,function(err,result){
-      if(err){
+  addSql.map(function (item) {
+    connection.query(Sql, item, function (err, result) {
+      if (err) {
         console.log(err.message);
         return;
       }
@@ -195,12 +199,12 @@ function initialCameraPhoto(n){
     });
   });
 }
-// initialCameraPhoto(10);
+// initialCameraPhoto(6,10);
 
-app.get('/depth',function(req,res){
+app.get('/depth', function (req, res) {
   var Sql = 'select * from river_depth where camera_id=' + parseInt(req.query.id);
-  connection.query(Sql,function (err,result){
-    if(err){
+  connection.query(Sql, function (err, result) {
+    if (err) {
       console.log(err.message);
       return;
     }
@@ -212,14 +216,18 @@ app.get('/depth',function(req,res){
 var pagelength = 10;
 for (let i = 0; i < pagelength; i++) {
   app.get('/page_' + (i + 1), function (req, res) {
-    var Sql = 'select * from camera_photo where camera_id=' + 
-    res.send(page[i]);
+    var Sql = 'select * from camera_photo where camera_id=' + req.query.id;
+    connection.query(Sql, function (err, result) {
+      if (err) {
+        console.log(err.message);
+        return;
+      }
+      res.send(result);
+    });
   });
 }
 
-app.get('/cameras', function (req, res) {
-  res.send(camerasName);
-});
+
 
 var settingHtml = fs.readFileSync('./dist/setting.html', 'UTF-8', function (err, data) {
   if (err) {

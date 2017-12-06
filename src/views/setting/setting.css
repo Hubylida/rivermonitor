@@ -6,6 +6,7 @@
   height: 100vh;
   background: #2d333d;
   border-top: 5px solid #11afff;
+  z-index: 999;
 }
 
 #name {
@@ -47,6 +48,14 @@
   font-size: 1.5em;
 }
 
+#nav-btn{
+  width: 2em;
+  position: absolute;
+  top: .8em;
+  right: .8em;
+  display: none;
+}
+
 #right-main {
   min-height: 88vh;
   background: #4F5860;
@@ -74,3 +83,21 @@
 .change {
   margin-right: 1em;
 }
+
+@media screen and (max-width: 1024px){
+  #left{
+    left: -14em;
+  }
+  #right{
+    width: 100vw;
+    margin-left: 0;
+  }
+  #title{
+    width: 100%;
+    text-align: center;
+  }
+  #nav-btn{
+    display: block;
+  }
+}
+

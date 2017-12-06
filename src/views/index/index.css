@@ -13,3 +13,18 @@ body{
 .cam-btn{
   margin: 1em;
 }
+
+@media screen and (max-width: 1024px){
+  #btn-contain{
+    width: 100%;
+    text-align: center;
+  }
+
+  #btn-contain a{
+    width: 90%;
+  }
+
+  .cam-btn{
+    margin: .5em;
+  }
+}
