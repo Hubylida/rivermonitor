@@ -20,11 +20,11 @@ $(function () {
         if(flag){
             $('#left').animate({
                 left: '+=14em'
-            }, 600);
+            }, 500);
         }else{
             $('#left').animate({
                 left: '-=14em'
-            }, 600);
+            }, 500);
         }           
         flag = !flag;
     });
@@ -65,7 +65,7 @@ $(function () {
                             for (let i = 0; i < 3; i++) {
                                 elements+= `<div class="row">`
                                 for(let j = 0; j < 4; j++){
-                                    elements+=`<div class="col-md-3 photo-item"><img class="photo" src="${data[index++].photo_src}"></div>`;
+                                    elements+=`<div class="col-md-3 col-xs-6 photo-item"><img class="photo" src="${data[index++].photo_src}"></div>`;
                                 }
                                 elements+= `</div>`;
                             }

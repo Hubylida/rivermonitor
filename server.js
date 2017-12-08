@@ -5,15 +5,23 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const app = express();
 const config = require('./webpack.config.js');
 const compiler = webpack(config);
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const mysql = require('mysql');
+const qs = require('querystring');
 // webpack.dev.config.js
 // webpack.production.config.js
 
 app.use(webpackDevMiddleware(compiler, {
   publicPath: config.output.publicPath
 }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+app.use(cookieParser());
 
-var fs = require('fs');
-var mysql = require('mysql');
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -102,7 +110,7 @@ app.get('/cameras', function (req, res) {
   });
 });
 
-for(let i = 0; i < 10; i++){
+for (let i = 0; i < 10; i++) {
   app.get('/camera_' + (i + 1), function (req, res) {
     res.send(videoHtml);
     res.status(404).send('Sorry, we cannot find that!');
@@ -135,17 +143,16 @@ app.get('/setting', function (req, res) {
   })
 })
 
-app.get('/camera_info', function (req, res) {
+app.post('/camera_info', function (req, res) {
+  res.send(req.body);
   var Sql = 'select * from cameras';
   connection.query(Sql, function (err, result) {
     if (err) {
       console.error(err);
       return;
     }
-    var newInfo = req.query,
-      id;
-    newInfo.camera_id = parseInt(newInfo.camera_id);
-    id = newInfo.camera_id;
+    var newInfo = req.body;
+    id = parseInt(newInfo.camera_id);
     for (let i in newInfo) {
       if (newInfo[i] != result[id - 1][i]) {
         var Sql = 'update cameras set ' + i + '="' + newInfo[i] + '" where camera_id=' + id;
@@ -161,12 +168,12 @@ app.get('/camera_info', function (req, res) {
   });
 })
 
-function intialDepthTable(m,n) {
-  var sql = 'insert into river_depth (camera_id,name,depth,time) values (?,?,?,?)';
+function intialDepthTable(m, n) {
+  var sql = 'insert into river_depth (camera_id,name,depth,time) values (?,?,?,now())';
   var addSql = [];
-  for(let j = 0; j < m; j++){
+  for (let j = 0; j < m; j++) {
     for (let i = 0; i < n; i++) {
-      addSql.push([(i+1),"仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1), '2017-12-2 14:43:02']);
+      addSql.push([(i + 1), "仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1)]);
     }
   }
   addSql.map(function (item) {
@@ -181,12 +188,12 @@ function intialDepthTable(m,n) {
 }
 // intialDepthTable(11,10);
 
-function initialCameraPhoto(m,n) {
-  var Sql = 'insert into camera_photo (camera_id,photo_src,time,note) values (?,?,?,?)';
+function initialCameraPhoto(m, n) {
+  var Sql = 'insert into camera_photo (camera_id,photo_src,note) values (?,?,now(),?)';
   var addSql = [];
-  for(let j = 0; j < m*12; j++){
+  for (let j = 0; j < m * 12; j++) {
     for (let i = 0; i < n; i++) {
-      addSql.push([(i + 1), "b-4.png", "2017-12-4 15:20:30", "测试"]);
+      addSql.push([(i + 1), "b-4.png", "测试"]);
     }
   }
   addSql.map(function (item) {
@@ -238,10 +245,44 @@ app.get('/setting.html', function (req, res) {
   res.send(settingHtml);
 });
 
-app.post('/photo', function (req, res) {
-  console.log('req: ', req);
-  // console.log(req.query.wd);
+app.post('/depth', function (req, res) {
+  res.send(body);
 });
+
+app.post('/picture', function (req, res) {
+  req.setEncoding('binary'); //设置为binary
+  var imgData = '';
+  var dirname = './dist/cp_' + req.query.id,
+    filename = './dist/cp_' + req.query.id + '/' + req.query.p + '.jpg';
+  var Sql = 'insert into camera_photo (camera_id,photo_src,time,note) values (?,?,now(),?)';
+  var addSql = [req.query.id,filename,"测试"];
+  req.on('data', function (chunk) {
+    imgData += chunk;
+  });
+  req.on('end', function () {
+    fs.readdir(dirname, function (err) {
+      if (err) {
+        fs.mkdir(dirname, function (err) {
+          if (err) {
+            console.log(err.message);
+          }
+        });
+      }
+      fs.writeFile(filename, imgData, 'binary', function (err) {
+        if (err) {
+          console.log(err.message);
+        }
+      });
+    });
+  });
+  connection.query(Sql,addSql,function(err,result){
+    if(err){
+      console.log(err.message);
+    }
+    console.log("insert photo success!");
+  })
+  res.send("ok");
+})
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!\n');

@@ -12,11 +12,11 @@ $(function () {
       if(flag){
           $('#left').animate({
               left: '+=14em'
-          }, 600);
+          }, 500);
       }else{
           $('#left').animate({
               left: '-=14em'
-          }, 600);
+          }, 500);
       }           
       flag = !flag;
   });
@@ -46,13 +46,13 @@ $(function () {
         $('#right-main').append(elements);
         var item = Item();
         item.disable();
-        for (let i = 0; i < total * 4; i++) {
+        for (let i = 0; i < total; i++) {
           $($('.save')[i]).on('click', function () {
             $($(this).parent().find('button')[0]).removeClass('disabled');
             item.disable();
             $.ajax({
               url: 'camera_info',
-              type: 'get',
+              type: 'post',
               data: {
                 camera_id: $(this).parent().find('input')[0].value,
                 name: $(this).parent().find('input')[1].value,

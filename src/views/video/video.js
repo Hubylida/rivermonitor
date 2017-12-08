@@ -18,11 +18,11 @@ $(function () {
         if(flag){
             $('#left').animate({
                 left: '+=13em'
-            }, 600);
+            }, 500);
         }else{
             $('#left').animate({
                 left: '-=13em'
-            }, 600);
+            }, 500);
         }           
         flag = !flag;
     });
@@ -118,7 +118,6 @@ $(function () {
             id: camId[3].substring(7)
         },
         success: function (data) {
-            console.log(data);
             var id = data.length - 1;
             $('#depth-wrap').empty();
             $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
