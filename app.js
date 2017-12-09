@@ -282,7 +282,7 @@ app.post('/picture', function (req, res) {
     console.log("insert photo success!");
   })
   res.send("ok");
-})
+});
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!\n');
