@@ -34,7 +34,7 @@ module.exports = {
       host : '120.79.57.240',
       ref  : 'origin/master',
       repo : 'git@github.com:Hubylida/rivermonitor.git',
-      path : '/var/www/rivermonitor',
+      path : 'home/var/yuan/www/rivermonitor',
       'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     }
   }
