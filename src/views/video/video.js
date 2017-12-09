@@ -5,7 +5,6 @@ import '../components/img/video_icon.png'
 import '../components/img/photo_icon.png'
 import '../components/img/setting_icon.png'
 import '../components/img/nav.png'
-import './1.mp4'
 
 $(function () {
     var url = window.location.href,

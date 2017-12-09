@@ -6,9 +6,6 @@ import '../components/img/photo_icon.png'
 import '../components/img/setting_icon.png'
 import '../components/img/nav.png'
 import b_1 from '../components/img/b-1.png'
-import b_2 from '../components/img/b-2.png'
-import b_3 from '../components/img/b-3.png'
-import b_4 from '../components/img/b-4.png'
 require('../components/js/jqpaginator.min.js')
 $(function () {
     var url = window.location.href,
