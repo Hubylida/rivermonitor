@@ -1,6 +1,6 @@
 // import _ from 'lodash';
 import './index.css';
-import bg_img from './bg.jpg';
+import bg_img from '../components/img/bg.jpg';
  
 function createBtn (){
   $.ajax({
