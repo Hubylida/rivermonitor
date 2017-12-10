@@ -39,10 +39,10 @@ connection.connect(function (err) {
 
 
 function addData() {
-  var addSql = 'insert into cameras (name,location,info,mac,video_url,time) values (?,?,?,?,?,?)';
+  var addSql = 'insert into cameras (name,location,info,mac,video_url,time) values (?,?,?,?,?,now())';
   var addSqlParams = [];
   for (let i = 0; i < 10; i++) {
-    addSqlParams.push(["仙林" + (i + 1), "仙林", "南邮x-10" + (i + 1), "1.1.1.1", "./1.mp4", "2017-11-30 15:20"])
+    addSqlParams.push(["仙林" + (i + 1), "仙林", "南邮x-10" + (i + 1), "1.1.1.1", "http://www.baidu.com"])
   }
   addSqlParams.map(function (item) {
     connection.query(addSql, item, function (err, result) {
@@ -193,7 +193,7 @@ function initialCameraPhoto(m, n) {
   var addSql = [];
   for (let j = 0; j < m * 12; j++) {
     for (let i = 0; i < n; i++) {
-      addSql.push([(i + 1), "b-4.png", "测试"]);
+      addSql.push([(i + 1), "b-1.png", "测试"]);
     }
   }
   addSql.map(function (item) {
