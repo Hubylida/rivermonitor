@@ -107,7 +107,7 @@ $(function () {
                     dataArray.push(value);
                 }
                 chart.setOption(option);
-            }, 1000);
+            }, 3000);
         }
     });
     }, 3000);
