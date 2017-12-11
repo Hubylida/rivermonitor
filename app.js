@@ -247,7 +247,7 @@ app.get('/setting.html', function (req, res) {
 
 app.post('/depth', function (req, res) {
   var data = req.body;
-  var id = parseFloat(data.camera_id),depth = parseInt(data.depth),name = data.name;
+  var id = parseInt(data.camera_id),depth = parseFloat(data.depth).toFixed(2),name = data.name;
   var Sql = 'insert into river_depth (camera_id,name,depth,time) values (?,?,?,now())';  
   var addSql = [id,name,depth];
   connection.query(Sql,addSql,function(err,result){
