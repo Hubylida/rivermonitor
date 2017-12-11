@@ -189,7 +189,7 @@ function intialDepthTable(m, n) {
 // intialDepthTable(11,10);
 
 function initialCameraPhoto(m, n) {
-  var Sql = 'insert into camera_photo (camera_id,photo_src,note) values (?,?,now(),?)';
+  var Sql = 'insert into camera_photo (camera_id,photo_src,time,note) values (?,?,now(),?)';
   var addSql = [];
   for (let j = 0; j < m * 12; j++) {
     for (let i = 0; i < n; i++) {
@@ -206,7 +206,7 @@ function initialCameraPhoto(m, n) {
     });
   });
 }
-// initialCameraPhoto(6,10);
+// initialCameraPhoto(1,10);
 
 app.get('/depth', function (req, res) {
   var Sql = 'select * from river_depth where camera_id=' + parseInt(req.query.id);
@@ -246,7 +246,18 @@ app.get('/setting.html', function (req, res) {
 });
 
 app.post('/depth', function (req, res) {
-  res.send(body);
+  var data = req.body;
+  var id = parseInt(data.camera_id),depth = parseInt(data.depth),name = data.name;
+  var Sql = 'insert into river_depth (camera_id,name,depth,time) values (?,?,?,now())';  
+  var addSql = [id,name,depth];
+  connection.query(Sql,addSql,function(err,result){
+    if(err){
+      console.log(err.message);
+      return;
+    }
+    res.send(data);
+    console.log("insert depth " + depth + " to camera_" + id + " ok");
+  })
 });
 
 app.post('/picture', function (req, res) {
