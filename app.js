@@ -25,7 +25,7 @@ app.use(cookieParser());
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'yuan',
+  password: '1',
   database: 'rivermonitor'
 });
 
@@ -39,10 +39,10 @@ connection.connect(function (err) {
 
 
 function addData() {
-  var addSql = 'insert into cameras (name,location,info,mac,video_url,time) values (?,?,?,?,?,now())';
+  var addSql = 'insert into cameras (camera_id,name,location,info,mac,video_url,time) values (?,?,?,?,?,now())';
   var addSqlParams = [];
   for (let i = 0; i < 10; i++) {
-    addSqlParams.push(["仙林" + (i + 1), "仙林", "南邮x-10" + (i + 1), "1.1.1.1", "http://www.baidu.com"])
+    addSqlParams.push([(i+1),"仙林" + (i + 1), "仙林", "南邮x-10" + (i + 1), "1.1.1.1", "http://www.baidu.com"])
   }
   addSqlParams.map(function (item) {
     connection.query(addSql, item, function (err, result) {

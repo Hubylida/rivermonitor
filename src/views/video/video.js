@@ -14,15 +14,15 @@ $(function () {
     $('#photo-a').attr('href', camId[3] + '_p');
     var flag = true;
     $('#nav-btn').on('click', function () {
-        if(flag){
+        if (flag) {
             $('#left').animate({
                 left: '+=13em'
             }, 500);
-        }else{
+        } else {
             $('#left').animate({
                 left: '-=13em'
             }, 500);
-        }           
+        }
         flag = !flag;
     });
     $.ajax({
@@ -37,34 +37,35 @@ $(function () {
                 cameras.location + '</p>' + '<p class="common-info">时间: ' + cameras.time + '</p>' +
                 '<p class="common-info">当前水位:</p><p id="depth-wrap"></p>';
             $('#video-info').append(info);
+            $('#video').attr('src', data.video_url);
+        }
+    });
+    var dataArray = [];
+    setInterval(function () {
+    $.ajax({
+        url: 'depth',
+        type: 'get',
+        data: {
+            id: camId[3].substring(7)
+        },
+        success: function (data) {
+            var id = data.length - 1;
+            $('#depth-wrap').empty();
+            $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
+
             var echarts = require('echarts');
             var chart = echarts.init(document.getElementById('chart'));
-            $('#video').attr('src', data.video_url);
-
-            function randomData() {
-                now = new Date(+now + oneDay);
-                value = value + Math.random() * 21 - 10;
-                return {
-                    name: now.toString(),
-                    value: [
-                        [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-                        Math.round(value)
-                    ]
-                }
+            var now = new Date(2017, 12, 11);
+            var value = {
+                name: now.toString(),
+                value:[
+                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+                    data[id].depth
+                ]
             }
-
-            var data = [];
-            var now = +new Date(1997, 9, 3);
-            var oneDay = 24 * 3600 * 1000;
-            var value = Math.random() * 1000;
-            for (var i = 0; i < 1000; i++) {
-                data.push(randomData());
-            }
-
             var option = {
                 title: {
-                    text: '历史水位',
-                    left: 'center'
+                    text: '历史水位'
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -91,36 +92,23 @@ $(function () {
                     }
                 },
                 series: [{
-                    name: '模拟数据',
+                    name: '水位数据',
                     type: 'line',
                     showSymbol: false,
                     hoverAnimation: false,
-                    data: data
+                    data: dataArray
                 }]
             };
+            
             setInterval(function () {
+            
                 for (var i = 0; i < 5; i++) {
-                    data.shift();
-                    data.push(randomData());
+                    dataArray.shift();
+                    dataArray.push(value);
                 }
-
                 chart.setOption(option);
             }, 1000);
-
         }
     });
-    // var interval = setInterval(function () {
-    $.ajax({
-        url: 'depth',
-        type: 'get',
-        data: {
-            id: camId[3].substring(7)
-        },
-        success: function (data) {
-            var id = data.length - 1;
-            $('#depth-wrap').empty();
-            $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
-        }
-    });
-    // },3000);
-})
+    }, 3000);
+});
