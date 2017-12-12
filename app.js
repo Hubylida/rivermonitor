@@ -113,11 +113,9 @@ app.get('/cameras', function (req, res) {
 for (let i = 0; i < 10; i++) {
   app.get('/camera_' + (i + 1), function (req, res) {
     res.send(videoHtml);
-    res.status(404).send('Sorry, we cannot find that!');
   });
   app.get('/camera_' + (i + 1) + '_p', function (req, res) {
     res.send(photoHtml);
-    res.status(404).send('Sorry, we cannot find that!');
   });
 }
 
