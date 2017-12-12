@@ -54,15 +54,27 @@ $(function () {
             $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
 
             var echarts = require('echarts');
-            var chart = echarts.init(document.getElementById('chart'));
-            var now = new Date(2017, 12, 11);
-            var value = {
-                name: now.toString(),
-                value:[
-                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-                    data[id].depth
-                ]
+            var myChart = echarts.init(document.getElementById('chart'));
+            function getData() {
+                value = data[id].depth;
+                now = new Date(+now + oneDay);
+                return {
+                    name: now.toString(),
+                    value: [
+                        [now.getFullYear(), now.getMonth(), now.getDate()].join('/'),
+                        Math.round(value)
+                    ]
+                }
             }
+            
+            var dataAyyay = [];
+            var now = new Date();
+            var oneDay = 24 * 3600;
+            var value = Math.random() * 1000;
+            for (var i = 0; i < 1000; i++) {
+                dataArray.push(getData());
+            }
+            
             var option = {
                 title: {
                     text: '历史水位'
@@ -81,20 +93,20 @@ $(function () {
                 xAxis: {
                     type: 'time',
                     splitLine: {
-                        show: false
+                        show: true
                     }
                 },
                 yAxis: {
                     type: 'value',
                     boundaryGap: [0, '100%'],
                     splitLine: {
-                        show: false
+                        show: true
                     }
                 },
                 series: [{
-                    name: '水位数据',
+                    name: '当前数据',
                     type: 'line',
-                    showSymbol: false,
+                    showSymbol: true,
                     hoverAnimation: false,
                     data: dataArray
                 }]
@@ -104,9 +116,15 @@ $(function () {
             
                 for (var i = 0; i < 5; i++) {
                     dataArray.shift();
-                    dataArray.push(value);
+                    dataArray.push(getData());
                 }
-                chart.setOption(option);
+                myChart.setOption(option);
+                myChart.setOption({
+                    series: [{
+                        data: dataArray
+                    }]
+                });
+                
             }, 3000);
         }
     });
