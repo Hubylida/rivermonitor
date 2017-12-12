@@ -49,83 +49,82 @@ $(function () {
             id: camId[3].substring(7)
         },
         success: function (data) {
+            console.log(data);
             var id = data.length - 1;
             $('#depth-wrap').empty();
             $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
 
             var echarts = require('echarts');
-            var myChart = echarts.init(document.getElementById('chart'));
-            function getData() {
-                value = data[id].depth;
-                now = new Date(+now + oneDay);
-                return {
-                    name: now.toString(),
-                    value: [
-                        [now.getFullYear(), now.getMonth(), now.getDate()].join('/'),
-                        Math.round(value)
-                    ]
-                }
+            var myChart = echarts.init(document.getElementById('chart'));      
+            var dataArray = [],timeArray = [];
+            for(let i = 0; i < id; i++){
+                dataArray.push(data[i].depth);
+                timeArray.push((data[i].time).substring(11,19));
             }
-            
-            var dataAyyay = [];
-            var now = new Date();
-            var oneDay = 24 * 3600;
-            var value = Math.random() * 1000;
-            for (var i = 0; i < 1000; i++) {
-                dataArray.push(getData());
-            }
-            
             var option = {
                 title: {
-                    text: '历史水位'
+                    text: data[id].name+'的历史水位',
+                    left: 'center'
                 },
                 tooltip: {
                     trigger: 'axis',
-                    formatter: function (params) {
-                        params = params[0];
-                        var date = new Date(params.name);
-                        return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
-                    },
                     axisPointer: {
-                        animation: false
+                        type: 'cross'
                     }
                 },
-                xAxis: {
-                    type: 'time',
-                    splitLine: {
-                        show: true
+                toolbox: {
+                    show: true,
+                    feature: {
+                        saveAsImage: {}
                     }
+                },
+                xAxis:  {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: timeArray
                 },
                 yAxis: {
                     type: 'value',
-                    boundaryGap: [0, '100%'],
-                    splitLine: {
-                        show: true
+                    axisLabel: {
+                        formatter: '{value} m'
+                    },
+                    axisPointer: {
+                        snap: true
                     }
                 },
-                series: [{
-                    name: '当前数据',
-                    type: 'line',
-                    showSymbol: true,
-                    hoverAnimation: false,
-                    data: dataArray
-                }]
-            };
-            
-            setInterval(function () {
-            
-                for (var i = 0; i < 5; i++) {
-                    dataArray.shift();
-                    dataArray.push(getData());
-                }
-                myChart.setOption(option);
-                myChart.setOption({
-                    series: [{
-                        data: dataArray
+                visualMap: {
+                    show: false,
+                    dimension: 0,
+                    pieces: [{
+                        lt: 100,
+                        gt: 0,
+                        color: '#4285f4'
                     }]
-                });
-                
-            }, 3000);
+                },
+                series: [
+                    {
+                        name:'水深',
+                        type:'line',
+                        smooth: true,
+                        data: dataArray
+                        // markArea: {
+                        //     data: [ [{
+                        //         name: '早高峰',
+                        //         xAxis: '07:30'
+                        //     }, {
+                        //         xAxis: '10:00'
+                        //     }], [{
+                        //         name: '晚高峰',
+                        //         xAxis: '17:30'
+                        //     }, {
+                        //         xAxis: '21:15'
+                        //     }] ]
+                        // }
+                    }
+                ]
+            };
+
+                myChart.setOption(option);          
         }
     });
     }, 3000);

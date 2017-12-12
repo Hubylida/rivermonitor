@@ -171,7 +171,7 @@ function intialDepthTable(m, n) {
   var addSql = [];
   for (let j = 0; j < m; j++) {
     for (let i = 0; i < n; i++) {
-      addSql.push([(i + 1), "仙林" + (i + 1), parseFloat(10 * Math.random()).toFixed(1)]);
+      addSql.push([(i + 1), "仙林" + (i + 1), parseFloat(20 * Math.random()).toFixed(1)]);
     }
   }
   addSql.map(function (item) {
