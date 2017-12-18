@@ -142,3 +142,26 @@ video{
   }
 }
 
+@media screen and (max-width: 400px) {
+  #title{
+    font-size: 1em;
+  }
+  #nav-btn{
+    width: 1.5em;
+    top: .5em;
+    right: .5em;
+  }
+  #video-wrap{
+    margin: 0;
+    margin-top: 1em;
+  }
+  #video-info{
+    margin: .2em;
+  }
+  #chart-wrap{
+    padding: 0;
+  }
+  .container-fluid{
+    padding: 0;
+  }
+}
