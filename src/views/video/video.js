@@ -57,7 +57,7 @@ $(function () {
             var echarts = require('echarts');
             var myChart = echarts.init(document.getElementById('chart'));      
             var dataArray = [],timeArray = [];
-            for(let i = id-10; i < id; i++){
+            for(let i = id; i > (id-10); i--){
                 dataArray.push(data[i].depth);
                 timeArray.push((data[i].time).substring(11,19));
             }
