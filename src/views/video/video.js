@@ -5,10 +5,11 @@ import '../components/img/video_icon.png'
 import '../components/img/photo_icon.png'
 import '../components/img/setting_icon.png'
 import '../components/img/nav.png'
-
+require('../components/js/sewise.player.min.js');
 $(function () {
     var url = window.location.href,
         camId = url.split('/');
+    var windowSize = $(window).width();
     $('#video-a').css('border-left-color', "#11afff");
     $('#video-a').attr('href', camId[3]);
     $('#photo-a').attr('href', camId[3] + '_p');
@@ -25,6 +26,25 @@ $(function () {
         }
         flag = !flag;
     });
+    
+    if(window.size < 414){
+        $('#video').css('display','none');
+        $('#video-wrap').empty();
+    }else{
+        SewisePlayer.setup({
+            server: 'vod',
+            type: 'm3u8',
+            autostart: 'true',
+            poster: '',
+            videourl: 'http://alhlsgw.lechange.com:9001/LCO/3B04A81PAU00249/0/1/20171220101215/dev_20171220101215_dxxzq6mtpaa3m80e.m3u8',
+            skin: 'vodOrange',
+            title: '',
+            claritybutton: 'disable',
+            lang: 'zh_CN'
+        }, 'video');
+    }
+
+
     $.ajax({
         url: 'video',
         type: 'get',
@@ -34,7 +54,7 @@ $(function () {
         success: function (data) {
             var cameras = data;
             var info = '<p class="common-info">摄像头名字: ' + cameras.name + '</p>' + '<p class="common-info">地点: ' +
-                cameras.location + '</p>' + '<p class="common-info">时间: ' + cameras.time.substring(0,10)+ '</p>' +
+                cameras.location + '</p>' + '<p class="common-info">时间: ' + cameras.time.substring(0, 10) + '</p>' +
                 '<p class="common-info">当前水位:</p><p id="depth-wrap"></p>';
             $('#video-info').append(info);
             $('#video').attr('src', data.video_url);
@@ -42,69 +62,69 @@ $(function () {
     });
     var dataArray = [];
     setInterval(function () {
-    $.ajax({
-        url: 'depth',
-        type: 'get',
-        data: {
-            id: camId[3].substring(7)
-        },
-        success: function (data) {
-            console.log(data);
-            var id = data.length - 1;
-            $('#depth-wrap').empty();
-            $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
+        $.ajax({
+            url: 'depth',
+            type: 'get',
+            data: {
+                id: camId[3].substring(7)
+            },
+            success: function (data) {
+                console.log(data);
+                var id = data.length - 1;
+                $('#depth-wrap').empty();
+                $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
 
-            var echarts = require('echarts');
-            var myChart = echarts.init(document.getElementById('chart'));      
-            var dataArray = [],timeArray = [];
-            for(let i = id; i > (id-10); i--){
-                dataArray.push(data[i].depth);
-                timeArray.push((data[i].time).substring(11,19));
-            }
-            var option = {
-                title: {
-                    text: data[id].name+'的历史水位',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'cross'
-                    }
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                xAxis:  {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: timeArray
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: '{value} m'
+                var echarts = require('echarts');
+                var myChart = echarts.init(document.getElementById('chart'));
+                var dataArray = [],
+                    timeArray = [];
+                for (let i = id; i > (id - 10); i--) {
+                    dataArray.push(data[i].depth);
+                    timeArray.push((data[i].time).substring(11, 19));
+                }
+                var option = {
+                    title: {
+                        text: data[id].name + '的历史水位',
+                        left: 'center'
                     },
-                    axisPointer: {
-                        snap: true
-                    }
-                },
-                visualMap: {
-                    show: false,
-                    dimension: 0,
-                    pieces: [{
-                        lt: 100,
-                        gt: 0,
-                        color: '#4285f4'
-                    }]
-                },
-                series: [
-                    {
-                        name:'水深',
-                        type:'line',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross'
+                        }
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: timeArray
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value} m'
+                        },
+                        axisPointer: {
+                            snap: true
+                        }
+                    },
+                    visualMap: {
+                        show: false,
+                        dimension: 0,
+                        pieces: [{
+                            lt: 100,
+                            gt: 0,
+                            color: '#4285f4'
+                        }]
+                    },
+                    series: [{
+                        name: '水深',
+                        type: 'line',
                         smooth: true,
                         data: dataArray
                         // markArea: {
@@ -120,12 +140,11 @@ $(function () {
                         //         xAxis: '21:15'
                         //     }] ]
                         // }
-                    }
-                ]
-            };
+                    }]
+                };
 
-                myChart.setOption(option);          
-        }
-    });
+                myChart.setOption(option);
+            }
+        });
     }, 3000);
 });
