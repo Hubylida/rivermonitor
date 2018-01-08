@@ -14,15 +14,15 @@ $(function () {
     $('#video-a').attr('href', camId[3].substring(0, 8));
     var flag = true;
     $('#nav-btn').on('click', function () {
-        if(flag){
+        if (flag) {
             $('#left').animate({
                 left: '+=14em'
             }, 500);
-        }else{
+        } else {
             $('#left').animate({
                 left: '-=14em'
             }, 500);
-        }           
+        }
         flag = !flag;
     });
     var camera = {
@@ -39,10 +39,8 @@ $(function () {
             rowsize: 4
         },
         success: function (data) {
-            console.log(data);
             var totalpicture = data.length;
             var pages = Math.ceil(totalpicture / 12);
-            var index = 0;
             $('#btns').jqPaginator({
                 totalPages: pages,
                 visiblePages: 8,
@@ -57,15 +55,19 @@ $(function () {
                             rows: 3,
                             rowsize: 4
                         },
-                        success: function (data) {
-                            var elements= '';
-                            for (let i = 0; i < 3; i++) {
-                                elements+= `<div class="row">`
-                                for(let j = 0; j < 4; j++){
-                                    elements+=`<div class="col-md-3 col-xs-6 photo-item"><img class="photo" src="${data[index++].photo_src}"></div>`;
+                        success: function (pdata) {
+                            let recievdData = [...pdata];
+                            var elements = '<div class="row">';
+                            var row;
+                            var index = 0;
+                            row = recievdData / 4 < 3 ? recievdData : 3;
+                            recievdData.map(function (item, index, array) {
+                                if ((index + 1) % 4 == 0) {
+                                    elements += '</div>'
+                                    elements += '<div class="row">'
                                 }
-                                elements+= `</div>`;
-                            }
+                                elements += '<div class="col-md-3 col-xs-6 photo-item"><img class="photo" src="' + item.photo_src + '"></div>';
+                            })
                             $('#main').empty();
                             $('#main').append(elements);
                         }
