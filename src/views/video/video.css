@@ -74,12 +74,6 @@ body{
   margin-right: 0;
 }
 
-video{
-  width: 100%;
-  background: #222;
-  color: #222;
-}
-
 #video-info{
   height: 90%;
   background: #fff;
@@ -147,7 +141,7 @@ video{
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 414px) {
   #title{
     font-size: 1em;
   }
@@ -159,6 +153,11 @@ video{
   #video-wrap{
     margin: 0;
     margin-top: 1em;
+    text-align: center;
+  }
+  #video{
+    width: 98%;
+    height: 221px;
   }
   #video-info{
     margin: .2em;

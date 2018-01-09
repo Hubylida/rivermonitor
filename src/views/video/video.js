@@ -5,7 +5,7 @@ import '../components/img/video_icon.png'
 import '../components/img/photo_icon.png'
 import '../components/img/setting_icon.png'
 import '../components/img/nav.png'
-require('../components/js/sewise.player.min.js');
+require('../components/player/sewise.player.min.js');
 $(function () {
     var url = window.location.href,
         camId = url.split('/');
@@ -26,24 +26,6 @@ $(function () {
         }
         flag = !flag;
     });
-    
-    if(window.size < 414){
-        $('#video').css('display','none');
-        $('#video-wrap').empty();
-    }else{
-        SewisePlayer.setup({
-            server: 'vod',
-            type: 'm3u8',
-            autostart: 'true',
-            poster: '',
-            videourl: 'http://alhlsgw.lechange.com:9001/LCO/3B04A81PAU00249/0/1/20171220101215/dev_20171220101215_dxxzq6mtpaa3m80e.m3u8',
-            skin: 'vodOrange',
-            title: '',
-            claritybutton: 'disable',
-            lang: 'zh_CN'
-        }, 'video');
-    }
-
 
     $.ajax({
         url: 'video',
@@ -57,7 +39,24 @@ $(function () {
                 cameras.location + '</p>' + '<p class="common-info">时间: ' + cameras.time.substring(0, 10) + '</p>' +
                 '<p class="common-info">当前水位:</p><p id="depth-wrap"></p>';
             $('#video-info').append(info);
-            $('#video').attr('src', data.video_url);
+            var video = $('#video');
+            if ($(window).width() < 414) {
+                $('#video').remove();
+                $('#video-wrap').append('<video id ="video" src="" controls="controls"></video>');
+                $('#video').attr('src', cameras.video_url);
+            } else {
+                SewisePlayer.setup({
+                    server: 'vod',
+                    type: 'm3u8',
+                    autostart: 'true',
+                    poster: '',
+                    videourl: cameras.video_url.toString(),
+                    // skin: 'vodOrange',
+                    title: '',
+                    claritybutton: 'disable',
+                    lang: 'zh_CN'
+                }, 'video');
+            }
         }
     });
     var dataArray = [];
@@ -69,7 +68,6 @@ $(function () {
                 id: camId[3].substring(7)
             },
             success: function (data) {
-                console.log(data);
                 var id = data.length - 1;
                 $('#depth-wrap').empty();
                 $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
