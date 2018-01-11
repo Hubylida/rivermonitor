@@ -36,8 +36,7 @@ $(function () {
         success: function (data) {
             var cameras = data;
             var info = '<p class="common-info">摄像头名字: ' + cameras.name + '</p>' + '<p class="common-info">地点: ' +
-                cameras.location + '</p>' + '<p class="common-info">时间: ' + cameras.time.substring(0, 10) + '</p>' +
-                '<p class="common-info">当前水位:</p><p id="depth-wrap"></p>';
+                cameras.location + '</p><p class="common-info" id="nowTime">时间: </p><p class="common-info">当前水位:</p><p id="depth-wrap"></p>';
             $('#video-info').append(info);
             var video = $('#video');
             if ($(window).width() < 414) {
@@ -71,7 +70,7 @@ $(function () {
                 var id = data.length - 1;
                 $('#depth-wrap').empty();
                 $('#depth-wrap').append(`<p id="depth">${data[id].depth}</>`);
-
+                $('#nowTime').text('时间: ' + data[id].time.substring(0,10));
                 var echarts = require('echarts');
                 var myChart = echarts.init(document.getElementById('chart'));
                 var dataArray = [],
